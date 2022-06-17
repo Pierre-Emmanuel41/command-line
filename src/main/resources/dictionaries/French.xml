@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary>
+	<version>1.0</version>
+	<locales>
+		<locale>fr</locale>
+		<locale>fr-FR</locale>
+		<locale>fr-CA</locale>
+	</locales>
+	<messages>
+		<message>
+			<code>COMMAND_LINE__NODE_NOT_FOUND</code>
+			<value>La commande %s n'existe pas</value>
+		</message>
+		<message>
+			<code>COMMAND_LINE__NODE_NOT_AVAILABLE</code>
+			<value>La commande %s n'est pas disponible</value>
+		</message>
+	</messages>
+</dictionary>
