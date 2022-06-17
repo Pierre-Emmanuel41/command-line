@@ -16,18 +16,18 @@ import fr.pederobien.dictionary.impl.XmlDictionaryParser;
 import fr.pederobien.dictionary.interfaces.IDictionaryParser;
 import fr.pederobien.utils.AsyncConsole;
 
-public class CommandLineContext {
+public class CommandLine {
 	private static final String FILE_PREFIX = "file";
 	private static final String JAR_PREFIX = "jar";
 	private static final String DEV_DICTIONARY_FOLDER = "src/main/resources/dictionaries/";
 	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/";
 
-	private CommandLineContextBuilder builder;
+	private CommandLineBuilder builder;
 	private ICommandRootNode<ICode> root;
 	private AtomicBoolean isInitialized;
 	private Scanner scanner;
 
-	private CommandLineContext(CommandLineContextBuilder builder, ICommandRootNode<ICode> root) {
+	private CommandLine(CommandLineBuilder builder, ICommandRootNode<ICode> root) {
 		this.builder = builder;
 		this.root = root;
 
@@ -114,7 +114,7 @@ public class CommandLineContext {
 		return builder.onInitialization == null ? true : builder.onInitialization.apply(root);
 	}
 
-	public static class CommandLineContextBuilder {
+	public static class CommandLineBuilder {
 		private Function<ICommandRootNode<ICode>, Boolean> onInitialization;
 		private Function<ICommandRootNode<ICode>, Boolean> onStart;
 		private Consumer<ICommandRootNode<ICode>> onStop;
@@ -124,7 +124,7 @@ public class CommandLineContext {
 		 * 
 		 * @param onInitialization The function to run during the initialization phase.
 		 */
-		public CommandLineContextBuilder(Function<ICommandRootNode<ICode>, Boolean> onInitialization) {
+		public CommandLineBuilder(Function<ICommandRootNode<ICode>, Boolean> onInitialization) {
 			this.onInitialization = onInitialization;
 		}
 
@@ -135,7 +135,7 @@ public class CommandLineContext {
 		 * 
 		 * @return This builder.
 		 */
-		public CommandLineContextBuilder onStart(Function<ICommandRootNode<ICode>, Boolean> onStart) {
+		public CommandLineBuilder onStart(Function<ICommandRootNode<ICode>, Boolean> onStart) {
 			this.onStart = onStart;
 			return this;
 		}
@@ -147,7 +147,7 @@ public class CommandLineContext {
 		 * 
 		 * @return This builder.
 		 */
-		public CommandLineContextBuilder onStop(Consumer<ICommandRootNode<ICode>> onStop) {
+		public CommandLineBuilder onStop(Consumer<ICommandRootNode<ICode>> onStop) {
 			this.onStop = onStop;
 			return this;
 		}
@@ -159,8 +159,8 @@ public class CommandLineContext {
 		 * 
 		 * @return The command line to start.
 		 */
-		public CommandLineContext build(ICommandRootNode<ICode> root) {
-			return new CommandLineContext(this, root);
+		public CommandLine build(ICommandRootNode<ICode> root) {
+			return new CommandLine(this, root);
 		}
 	}
 
