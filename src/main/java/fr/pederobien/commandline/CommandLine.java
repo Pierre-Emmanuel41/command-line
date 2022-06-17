@@ -17,11 +17,22 @@ import fr.pederobien.dictionary.interfaces.IDictionaryParser;
 import fr.pederobien.utils.AsyncConsole;
 
 public class CommandLine {
+	/**
+	 * Case when the code is running from a .jar file.
+	 */
+	public static final String PRODUCTION_ENVIRONMENT = "Production";
+
+	/**
+	 * Case when the code is running from an IDE.
+	 */
+	public static final String DEVELOPMENT_ENVIRONMENT = "Development";
+
 	private static final String FILE_PREFIX = "file";
 	private static final String JAR_PREFIX = "jar";
 	private static final String DEV_DICTIONARY_FOLDER = "src/main/resources/dictionaries/";
 	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/";
 
+	private String environment;
 	private CommandLineBuilder builder;
 	private ICommandRootNode<ICode> root;
 	private AtomicBoolean isInitialized;
@@ -32,6 +43,13 @@ public class CommandLine {
 		this.root = root;
 
 		isInitialized = new AtomicBoolean(false);
+	}
+
+	/**
+	 * @return The environment in which the program is running.
+	 */
+	public String getEnvironment() {
+		return environment;
 	}
 
 	public void start() {
@@ -89,11 +107,13 @@ public class CommandLine {
 
 		// Case Development environment
 		if (url.startsWith(FILE_PREFIX)) {
+			environment = DEVELOPMENT_ENVIRONMENT;
 			parser = new XmlDictionaryParser();
 			dictionaryFolder = DEV_DICTIONARY_FOLDER;
 
 			// Case production environment
 		} else if (url.startsWith(JAR_PREFIX)) {
+			environment = PRODUCTION_ENVIRONMENT;
 			parser = new JarXmlDictionaryParser(Paths.get(url.split("!")[0].substring(String.format("%s:%s:/", FILE_PREFIX, JAR_PREFIX).length()).replace("%20", " ")));
 			dictionaryFolder = PROD_DICTIONARY_FOLDER;
 		}
