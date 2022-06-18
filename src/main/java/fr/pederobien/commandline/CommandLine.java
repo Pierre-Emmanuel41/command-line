@@ -30,9 +30,10 @@ public class CommandLine {
 	private static final String FILE_PREFIX = "file";
 	private static final String JAR_PREFIX = "jar";
 	private static final String DEV_DICTIONARY_FOLDER = "src/main/resources/dictionaries/";
-	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/";
+	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/vocal/";
 
 	private String environment;
+	private String url;
 	private CommandLineBuilder builder;
 	private ICommandRootNode<ICode> root;
 	private AtomicBoolean isInitialized;
@@ -46,10 +47,23 @@ public class CommandLine {
 	}
 
 	/**
+	 * The environment is {@link #DEVELOPMENT_ENVIRONMENT} if the {@link #getUrl()} starts with "file" and is
+	 * {@link #PRODUCTION_ENVIRONMENT} if it starts with "jar".
+	 * 
 	 * @return The environment in which the program is running.
 	 */
 	public String getEnvironment() {
 		return environment;
+	}
+
+	/**
+	 * Get the url associated to this code. In production environment, the url looks like : "jar:file:/C:/&lt;path to the
+	 * jar&gt;.jar!/fr/pederobien/commandline/CommandLine.class
+	 * 
+	 * @return The external path leading to this code.
+	 */
+	public String getUrl() {
+		return url;
 	}
 
 	public void start() {
@@ -101,7 +115,7 @@ public class CommandLine {
 		if (!isInitialized.compareAndSet(false, true))
 			return false;
 
-		String url = getClass().getResource(getClass().getSimpleName() + ".class").toExternalForm();
+		url = getClass().getResource(getClass().getSimpleName() + ".class").toExternalForm();
 		IDictionaryParser parser = null;
 		String dictionaryFolder = null;
 
