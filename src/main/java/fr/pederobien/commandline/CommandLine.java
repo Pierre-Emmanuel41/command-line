@@ -30,7 +30,7 @@ public class CommandLine {
 	private static final String FILE_PREFIX = "file";
 	private static final String JAR_PREFIX = "jar";
 	private static final String DEV_DICTIONARY_FOLDER = "src/main/resources/dictionaries/";
-	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/vocal/";
+	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/command-line/";
 
 	private String environment;
 	private IDictionaryParser parser;
