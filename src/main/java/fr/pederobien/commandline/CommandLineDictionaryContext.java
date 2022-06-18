@@ -69,7 +69,7 @@ public class CommandLineDictionaryContext implements IDictionaryContext {
 	 * 
 	 * @param event The event used to get which message should be send, and to who the message should be sent.
 	 */
-	protected void send(IMessageEvent event) {
+	public void send(IMessageEvent event) {
 		AsyncConsole.printlnWithTimeStamp(getMessage(event));
 	}
 }

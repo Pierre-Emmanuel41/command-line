@@ -33,7 +33,7 @@ public class CommandLine {
 	private static final String PROD_DICTIONARY_FOLDER = "resources/dictionaries/vocal/";
 
 	private String environment;
-	private String url;
+	private IDictionaryParser parser;
 	private CommandLineBuilder builder;
 	private ICommandRootNode<ICode> root;
 	private AtomicBoolean isInitialized;
@@ -57,13 +57,20 @@ public class CommandLine {
 	}
 
 	/**
-	 * Get the url associated to this code. In production environment, the url looks like : "jar:file:/C:/&lt;path to the
-	 * jar&gt;.jar!/fr/pederobien/commandline/CommandLine.class
+	 * Register dictionaries to the {@link CommandLineDictionaryContext}.
 	 * 
-	 * @return The external path leading to this code.
+	 * @param dictionaryFolder The path leading to the folder that contains several dictionaries.
+	 * @param dictionaries     A list of file names corresponding to dictionary file to register.
 	 */
-	public String getUrl() {
-		return url;
+	public void registerDictionaries(String dictionaryFolder, String[] dictionaries) {
+		for (String dictionary : dictionaries)
+			try {
+				CommandLineDictionaryContext.instance().register(parser.parse(dictionaryFolder.concat(dictionary)));
+			} catch (Exception e) {
+				AsyncConsole.println(e);
+				for (StackTraceElement element : e.getStackTrace())
+					AsyncConsole.println(element);
+			}
 	}
 
 	public void start() {
@@ -115,8 +122,7 @@ public class CommandLine {
 		if (!isInitialized.compareAndSet(false, true))
 			return false;
 
-		url = getClass().getResource(getClass().getSimpleName() + ".class").toExternalForm();
-		IDictionaryParser parser = null;
+		String url = getClass().getResource(getClass().getSimpleName() + ".class").toExternalForm();
 		String dictionaryFolder = null;
 
 		// Case Development environment
@@ -135,15 +141,7 @@ public class CommandLine {
 		if (parser == null)
 			throw new IllegalStateException("Technical error, the environment is neither a development environment nor a production environment");
 
-		String[] dictionaries = new String[] { "English.xml", "French.xml" };
-		for (String dictionary : dictionaries)
-			try {
-				CommandLineDictionaryContext.instance().register(parser.parse(dictionaryFolder.concat(dictionary)));
-			} catch (Exception e) {
-				AsyncConsole.println(e);
-				for (StackTraceElement element : e.getStackTrace())
-					AsyncConsole.println(element);
-			}
+		registerDictionaries(dictionaryFolder, new String[] { "English.xml", "French.xml" });
 
 		return builder.onInitialization == null ? true : builder.onInitialization.apply(root);
 	}
