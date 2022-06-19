@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -36,12 +37,14 @@ public class CommandLine {
 	private IDictionaryParser parser;
 	private CommandLineBuilder builder;
 	private ICommandRootNode<ICode> root;
+	private String[] args;
 	private AtomicBoolean isInitialized;
 	private Scanner scanner;
 
-	private CommandLine(CommandLineBuilder builder, ICommandRootNode<ICode> root) {
+	private CommandLine(CommandLineBuilder builder, ICommandRootNode<ICode> root, String[] args) {
 		this.builder = builder;
 		this.root = root;
+		this.args = args;
 
 		isInitialized = new AtomicBoolean(false);
 	}
@@ -79,7 +82,7 @@ public class CommandLine {
 			return;
 		}
 
-		if (builder.onStart != null && !builder.onStart.apply(root)) {
+		if (builder.onStart != null && !builder.onStart.apply(root, args)) {
 			AsyncConsole.printlnWithTimeStamp("The start fails...");
 			return;
 		}
@@ -148,7 +151,7 @@ public class CommandLine {
 
 	public static class CommandLineBuilder {
 		private Function<ICommandRootNode<ICode>, Boolean> onInitialization;
-		private Function<ICommandRootNode<ICode>, Boolean> onStart;
+		private BiFunction<ICommandRootNode<ICode>, String[], Boolean> onStart;
 		private Consumer<ICommandRootNode<ICode>> onStop;
 
 		/**
@@ -167,7 +170,7 @@ public class CommandLine {
 		 * 
 		 * @return This builder.
 		 */
-		public CommandLineBuilder onStart(Function<ICommandRootNode<ICode>, Boolean> onStart) {
+		public CommandLineBuilder onStart(BiFunction<ICommandRootNode<ICode>, String[], Boolean> onStart) {
 			this.onStart = onStart;
 			return this;
 		}
@@ -188,11 +191,12 @@ public class CommandLine {
 		 * Creates a command line context ready to start.
 		 * 
 		 * @param root The command root in order to store command line.
+		 * @param args The string array from the main method.
 		 * 
 		 * @return The command line to start.
 		 */
-		public CommandLine build(ICommandRootNode<ICode> root) {
-			return new CommandLine(this, root);
+		public CommandLine build(ICommandRootNode<ICode> root, String[] args) {
+			return new CommandLine(this, root, args);
 		}
 	}
 
