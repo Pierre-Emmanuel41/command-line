@@ -8,6 +8,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.sun.jna.Platform;
+
 import fr.pederobien.commandtree.exceptions.NodeNotFoundException;
 import fr.pederobien.commandtree.exceptions.NotAvailableArgumentException;
 import fr.pederobien.commandtree.interfaces.ICommandRootNode;
@@ -137,7 +139,9 @@ public class CommandLine {
 			// Case production environment
 		} else if (url.startsWith(JAR_PREFIX)) {
 			environment = PRODUCTION_ENVIRONMENT;
-			parser = new JarXmlDictionaryParser(Paths.get(url.split("!")[0].substring(String.format("%s:%s:/", FILE_PREFIX, JAR_PREFIX).length()).replace("%20", " ")));
+			// Fix: Should not remove character "/" on Linux environment
+			String format = Platform.isWindows() ? "%s:%s:/" : "%s:%s:";
+			parser = new JarXmlDictionaryParser(Paths.get(url.split("!")[0].substring(String.format(format, FILE_PREFIX, JAR_PREFIX).length()).replace("%20", " ")));
 			dictionaryFolder = PROD_DICTIONARY_FOLDER;
 		}
 
