@@ -1,4 +1,6 @@
-package fr.pederobien.commandline;
+package fr.pederobien.commandline.impl;
+
+import fr.pederobien.dictionary.interfaces.ICode;
 
 public enum ECommandLineCode implements ICode {
 

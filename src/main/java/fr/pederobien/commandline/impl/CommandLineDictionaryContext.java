@@ -1,4 +1,4 @@
-package fr.pederobien.commandline;
+package fr.pederobien.commandline.impl;
 
 import java.util.Locale;
 import java.util.Map;

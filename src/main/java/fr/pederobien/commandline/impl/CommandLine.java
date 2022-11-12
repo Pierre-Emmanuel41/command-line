@@ -1,4 +1,4 @@
-package fr.pederobien.commandline;
+package fr.pederobien.commandline.impl;
 
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -10,14 +10,17 @@ import java.util.function.Function;
 
 import com.sun.jna.Platform;
 
+import fr.pederobien.commandline.events.CommandDispatchEvent;
 import fr.pederobien.commandtree.exceptions.NodeNotFoundException;
 import fr.pederobien.commandtree.exceptions.NotAvailableArgumentException;
 import fr.pederobien.commandtree.interfaces.ICommandRootNode;
 import fr.pederobien.dictionary.impl.JarXmlDictionaryParser;
 import fr.pederobien.dictionary.impl.MessageEvent;
 import fr.pederobien.dictionary.impl.XmlDictionaryParser;
+import fr.pederobien.dictionary.interfaces.ICode;
 import fr.pederobien.dictionary.interfaces.IDictionaryParser;
 import fr.pederobien.utils.AsyncConsole;
+import fr.pederobien.utils.event.EventManager;
 
 public class CommandLine {
 	/**
@@ -95,6 +98,8 @@ public class CommandLine {
 			AsyncConsole.print(">");
 			String command = scanner.nextLine();
 
+			CommandDispatchEvent event = new CommandDispatchEvent(this, command);
+			EventManager.callEvent(event);
 			if (command.trim().equals("stop") && builder.onStop != null) {
 				// Disconnecting before stopping program
 				try {
@@ -106,7 +111,7 @@ public class CommandLine {
 			}
 
 			try {
-				root.onCommand(command.split(" "));
+				root.onCommand(event.getArgs());
 				Thread.sleep(200);
 			} catch (NodeNotFoundException e) {
 				send(ECommandLineCode.COMMAND_LINE__NODE_NOT_FOUND, e.getNotFoundArgument());
@@ -211,6 +216,6 @@ public class CommandLine {
 	 * @param args Some arguments (optional) used for dynamic messages.
 	 */
 	public void send(ICode code, Object... args) {
-		AsyncConsole.printlnWithTimeStamp(CommandLineDictionaryContext.instance().getMessage(new MessageEvent(Locale.getDefault(), code.getCode(), args)));
+		AsyncConsole.printlnWithTimeStamp(CommandLineDictionaryContext.instance().getMessage(new MessageEvent(Locale.getDefault(), code, args)));
 	}
 }

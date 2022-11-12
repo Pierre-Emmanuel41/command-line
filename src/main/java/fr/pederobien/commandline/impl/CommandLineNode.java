@@ -1,10 +1,11 @@
-package fr.pederobien.commandline;
+package fr.pederobien.commandline.impl;
 
 import java.util.Locale;
 import java.util.function.Supplier;
 
 import fr.pederobien.commandtree.impl.CommandNode;
 import fr.pederobien.dictionary.impl.MessageEvent;
+import fr.pederobien.dictionary.interfaces.ICode;
 
 public class CommandLineNode extends CommandNode<ICode> {
 
@@ -36,7 +37,7 @@ public class CommandLineNode extends CommandNode<ICode> {
 	 * @param args Some arguments (optional) used for dynamic messages.
 	 */
 	protected void send(ICode code, Object... args) {
-		CommandLineDictionaryContext.instance().send(new MessageEvent(Locale.getDefault(), code.getCode(), args));
+		CommandLineDictionaryContext.instance().send(new MessageEvent(Locale.getDefault(), code, args));
 	}
 
 	/**
@@ -46,6 +47,6 @@ public class CommandLineNode extends CommandNode<ICode> {
 	 * @param args Some arguments (optional) used for dynamic messages.
 	 */
 	protected String getMessage(ICode code, Object... args) {
-		return CommandLineDictionaryContext.instance().getMessage(new MessageEvent(Locale.getDefault(), code.getCode(), args));
+		return CommandLineDictionaryContext.instance().getMessage(new MessageEvent(Locale.getDefault(), code, args));
 	}
 }
